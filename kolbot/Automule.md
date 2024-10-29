@@ -1,6 +1,6 @@
-[General Table of Contents](https://github.com/blizzhackers/documentation/#diablo-2-botting-system)
+[General Table of Contents](../README.md#diablo-2-botting-system)
 
-[Kolbot Table of Contents](https://github.com/blizzhackers/documentation/tree/master/kolbot/#kolbot)
+[Kolbot Table of Contents](README.md#kolbot)
 
 ---
 

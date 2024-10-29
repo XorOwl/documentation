@@ -1,6 +1,6 @@
-[general table of content](https://github.com/blizzhackers/documentation/#diablo-2-botting-system)
+[General Table of Contents](../README.md#diablo-2-botting-system)
 
-[kolbot table of content](https://github.com/blizzhackers/documentation/tree/master/kolbot/#kolbot)
+[Kolbot Table of Contents](README.md#kolbot)
 
 ---
 
@@ -21,24 +21,24 @@ For perming the chars with staying 2h in game, you should use the starter script
 Edit `kolbot/libs/systems/mulelogger/LoggerConfig.js` with required info and set the value:
 
 ```javascript
-    IngameTime: rand(7230, 7290),
+IngameTime: rand(7230, 7290),
 ```
 
 or
 
 ```javascript
-    AutoPerm: true, // override InGameTime to perm character
+AutoPerm: true, // override InGameTime to perm character
 ```
 
 ### D2BotTimerRefresh
 
-If you need only to refresh the countdown timer for your chars, a better choice can be [D2BotTimerRefresh.dbj on github](https://raw.githubusercontent.com/blizzhackers/documentation/master/kolbot/custom-scripts/D2BotTimerRefresh.dbj) saved as D2BotTimerRefresh.dbj in your ~\d2bs\kolbot\ folder.
+If you need only to refresh the countdown timer for your chars, a better choice can be [D2BotTimerRefresh.dbj on github](./custom-scripts/D2BotTimerRefresh.dbj) saved as D2BotTimerRefresh.dbj in your ~\d2bs\kolbot\ folder.
 
 This will log on accounts/chars and will keep every char for random 15-25 seconds (line 185) in the lobby, without creating games.
 
 Edit the lines 27-29 with the required info
 ```javascript
-		"account1/password/realm": ["all"],
-		"account2/password/realm": ["all"],
-		"account3/password/realm": ["all"]
+"account1/password/realm": ["all"],
+"account2/password/realm": ["all"],
+"account3/password/realm": ["all"]
 ```
