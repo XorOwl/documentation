@@ -7,257 +7,257 @@
 */
 
 function main() {
-	include("OOG.js");
-	include("json2.js");
-	include("common/Config.js");
-	include("common/Cubing.js");
-	include("common/Runewords.js");
-	include("common/Misc.js");
-	include("common/Util.js");
-	include("common/Prototypes.js");
-	include("common/Town.js");
+  include("OOG.js");
+  include("json2.js");
+  include("common/Config.js");
+  include("common/Cubing.js");
+  include("common/Runewords.js");
+  include("common/Misc.js");
+  include("common/Util.js");
+  include("common/Prototypes.js");
+  include("common/Town.js");
 
-	Config.init();
+  Config.init();
 
-	var i, myPartyId, player, otherParty, shitList, currScript, scriptList,
-		classes = ["Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"],
-		playerLevels = {},
-		partyTick = getTickCount(),
-		loot = [];
+  var i, myPartyId, player, otherParty, shitList, currScript, scriptList,
+    classes = ["Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"],
+    playerLevels = {},
+    partyTick = getTickCount(),
+    loot = [];
 
-	addEventListener("gameevent",
-		function (mode, param1, param2, name1, name2) {
-			var player;
+  addEventListener("gameevent",
+    function (mode, param1, param2, name1, name2) {
+      let player;
 
-			switch (mode) {
-			case 0x02: // "%Name1(%Name2) joined our world. Diablo's minions grow stronger."
-				if (Config.Greetings.length > 0) {
-					try {
-						player = getParty(name1);
-					} catch (e1) {
+      switch (mode) {
+      case 0x02: // "%Name1(%Name2) joined our world. Diablo's minions grow stronger."
+        if (Config.Greetings.length > 0) {
+          try {
+            player = getParty(name1);
+          } catch (e1) {
 
-					}
+          }
 
-					if (player && player.name !== me.name) {
-						say(Config.Greetings[rand(0, Config.Greetings.length - 1)].replace("$name", player.name).replace("$level", player.level).replace("$class", classes[player.classid]));
-					}
-				}
+          if (player && player.name !== me.name) {
+            say(Config.Greetings[rand(0, Config.Greetings.length - 1)].replace("$name", player.name).replace("$level", player.level).replace("$class", classes[player.classid]));
+          }
+        }
 
-				break;
-			case 0x06: // "%Name1 was Slain by %Name2"
-				if (Config.DeathMessages.length > 0) {
-					try {
-						player = getParty(name1);
-					} catch (e2) {
+        break;
+      case 0x06: // "%Name1 was Slain by %Name2"
+        if (Config.DeathMessages.length > 0) {
+          try {
+            player = getParty(name1);
+          } catch (e2) {
 
-					}
+          }
 
-					if (player && player.name !== me.name) {
-						say(Config.DeathMessages[rand(0, Config.DeathMessages.length - 1)].replace("$name", player.name).replace("$level", player.level).replace("$class", classes[player.classid]).replace("$killer", name2));
-					}
-				}
+          if (player && player.name !== me.name) {
+            say(Config.DeathMessages[rand(0, Config.DeathMessages.length - 1)].replace("$name", player.name).replace("$level", player.level).replace("$class", classes[player.classid]).replace("$killer", name2));
+          }
+        }
 
-				break;
-			case 0x00: // "%Name1(%Name2) dropped due to time out."
-			case 0x01: // "%Name1(%Name2) dropped due to errors."
-			case 0x03: // "%Name1(%Name2) left our world. Diablo's minions weaken."
-				if (me.playertype == 1 && loot.indexOf(name1) > -1) { // hardcore leaving char is removed from loot 
-					loot.splice(loot.indexOf(name1), 1);
-				}
+        break;
+      case 0x00: // "%Name1(%Name2) dropped due to time out."
+      case 0x01: // "%Name1(%Name2) dropped due to errors."
+      case 0x03: // "%Name1(%Name2) left our world. Diablo's minions weaken."
+        if (me.playertype == 1 && loot.indexOf(name1) > -1) { // hardcore leaving char is removed from loot 
+          loot.splice(loot.indexOf(name1), 1);
+        }
 
-				break;
-			}
-		});
-	addEventListener("scriptmsg",
-		function (msg) {
-			var obj;
+        break;
+      }
+    });
+  addEventListener("scriptmsg",
+    function (msg) {
+      let obj;
 
-			try {
-				obj = JSON.parse(msg);
+      try {
+        obj = JSON.parse(msg);
 
-				if (obj && obj.hasOwnProperty("currScript")) {
-					currScript = obj.currScript;
-				}
-			} catch (e3) {
+        if (obj && obj.hasOwnProperty("currScript")) {
+          currScript = obj.currScript;
+        }
+      } catch (e3) {
 
-			}
-		});
+      }
+    });
 
-	if (Config.PublicMode === 4 || Config.PublicMode === 5) {
-		print("ÿc2Party thread loaded. ÿc0Mode: ÿc2MyOwnParty - " + ((Config.PublicMode === 5) ? "Accept" : "Invite"));
-	} else print("ÿc2Party thread loaded. ÿc0Mode: ÿc2" + (Config.PublicMode === 2 ? "Accept" : "Invite"));
+  if (Config.PublicMode === 4 || Config.PublicMode === 5) {
+    print("ÿc2Party thread loaded. ÿc0Mode: ÿc2MyOwnParty - " + ((Config.PublicMode === 5) ? "Accept" : "Invite"));
+  } else print("ÿc2Party thread loaded. ÿc0Mode: ÿc2" + (Config.PublicMode === 2 ? "Accept" : "Invite"));
 
-	if (Config.ShitList || Config.UnpartyShitlisted) {
-		shitList = ShitList.read();
+  if (Config.ShitList || Config.UnpartyShitlisted) {
+    shitList = ShitList.read();
 
-		print(shitList.length + " entries in shit list.");
-	}
+    print(shitList.length + " entries in shit list.");
+  }
 
-	if (Config.PartyAfterScript) {
-		scriptList = [];
+  if (Config.PartyAfterScript) {
+    scriptList = [];
 
-		for (i in Scripts) {
-			if (Scripts.hasOwnProperty(i) && !!Scripts[i]) {
-				scriptList.push(i);
-			}
-		}
-	}
+    for (i in Scripts) {
+      if (Scripts.hasOwnProperty(i) && !!Scripts[i]) {
+        scriptList.push(i);
+      }
+    }
+  }
 
-	// Main loop
-	while (true) {
-		if (me.gameReady && (!Config.PartyAfterScript || scriptList.indexOf(currScript) > scriptList.indexOf(Config.PartyAfterScript))) {
-			player = getParty();
+  // Main loop
+  while (true) {
+    if (me.gameReady && (!Config.PartyAfterScript || scriptList.indexOf(currScript) > scriptList.indexOf(Config.PartyAfterScript))) {
+      player = getParty();
 
-			if (player) {
-				myPartyId = player.partyid;
+      if (player) {
+        myPartyId = player.partyid;
 
-				while (player.getNext()) {
-					switch (Config.PublicMode) {
-					case 1: // Invite others
-					case 3: // Invite others but never accept
-						if (getPlayerFlag(me.gid, player.gid, 8)) {
-							if (Config.ShitList && shitList.indexOf(player.name) === -1) {
-								say(player.name + " has been shitlisted.");
-								shitList.push(player.name);
-								ShitList.add(player.name);
-							}
+        while (player.getNext()) {
+          switch (Config.PublicMode) {
+          case 1: // Invite others
+          case 3: // Invite others but never accept
+            if (getPlayerFlag(me.gid, player.gid, 8)) {
+              if (Config.ShitList && shitList.indexOf(player.name) === -1) {
+                say(player.name + " has been shitlisted.");
+                shitList.push(player.name);
+                ShitList.add(player.name);
+              }
 
-							if (player.partyflag === 4) {
-								clickParty(player, 2); // cancel invitation
-								delay(100);
-							}
+              if (player.partyflag === 4) {
+                clickParty(player, 2); // cancel invitation
+                delay(100);
+              }
 
-							break;
-						}
+              break;
+            }
 
-						if (Config.ShitList && shitList.indexOf(player.name) > -1) {
-							break;
-						}
+            if (Config.ShitList && shitList.indexOf(player.name) > -1) {
+              break;
+            }
 
-						if (player.partyflag !== 4 && (Config.PublicMode === 1 || player.partyflag !== 2) && player.partyid === 65535) {
-							clickParty(player, 2);
-							delay(100);
-						}
+            if (player.partyflag !== 4 && (Config.PublicMode === 1 || player.partyflag !== 2) && player.partyid === 65535) {
+              clickParty(player, 2);
+              delay(100);
+            }
 
-						break;
-					case 2: // Accept invites
-						if (Config.Leader && player.name !== Config.Leader) {
-							break;
-						}
+            break;
+          case 2: // Accept invites
+            if (Config.Leader && player.name !== Config.Leader) {
+              break;
+            }
 
-						if (player.partyid !== 65535 && player.partyid !== myPartyId) {
-							otherParty = player.partyid;
-						}
+            if (player.partyid !== 65535 && player.partyid !== myPartyId) {
+              otherParty = player.partyid;
+            }
 
-						if (player.partyflag === 2 && (!otherParty || player.partyid === otherParty) && (getTickCount() - partyTick >= 2000 || Config.FastParty)) {
-							clickParty(player, 2);
-							delay(100);
-						}
+            if (player.partyflag === 2 && (!otherParty || player.partyid === otherParty) && (getTickCount() - partyTick >= 2000 || Config.FastParty)) {
+              clickParty(player, 2);
+              delay(100);
+            }
 
-						break;
-					case 4: // MyOwnParty invite
-						if (Config.MyOwnParty.indexOf(player.name) === -1) {
-							break;
-						}
+            break;
+          case 4: // MyOwnParty invite
+            if (Config.MyOwnParty.indexOf(player.name) === -1) {
+              break;
+            }
 
-						if (Config.MyOwnParty.length > 0) {
-							var i;
+            if (Config.MyOwnParty.length > 0) {
+              var i;
 
-							for (i = 0; i < Config.MyOwnParty.length; i += 1) {
-								if (player.name == Config.MyOwnParty[i] && player.name !== me.name) {
-									if (player.partyflag !== 4 && player.partyflag !== 2 && player.partyid === 65535) {
-										clickParty(player, 2);
+              for (i = 0; i < Config.MyOwnParty.length; i += 1) {
+                if (player.name == Config.MyOwnParty[i] && player.name !== me.name) {
+                  if (player.partyflag !== 4 && player.partyflag !== 2 && player.partyid === 65535) {
+                    clickParty(player, 2);
 
-										if (me.playertype == 1) { // hardcore permit loot of leader to other char who is invited in the party
-											clickParty(player, 0);
-										}
+                    if (me.playertype == 1) { // hardcore permit loot of leader to other char who is invited in the party
+                      clickParty(player, 0);
+                    }
 
-										delay(500);
-									}
-								}
-							}
+                    delay(500);
+                  }
+                }
+              }
 
-						} else if (Config.MyOwnParty.length === 0 || Config.MyOwnParty.length === undefined) {
-							Config.PublicMode = 1;
-						}
+            } else if (Config.MyOwnParty.length === 0 || Config.MyOwnParty.length === undefined) {
+              Config.PublicMode = 1;
+            }
 
-						break;
-					case 5: // MyOwnParty accept
-						if (Config.MyOwnParty.indexOf(player.name) === -1) {
-							break;
-						}
+            break;
+          case 5: // MyOwnParty accept
+            if (Config.MyOwnParty.indexOf(player.name) === -1) {
+              break;
+            }
 
-						if (Config.MyOwnParty.length > 0) {
-							var i;								
+            if (Config.MyOwnParty.length > 0) {
+              var i;
 
-							for (i = 0; i < Config.MyOwnParty.length; i += 1) {
-								if (player.name == Config.MyOwnParty[i] && player.name !== me.name) {
-									if (player.partyflag === 2) {
-										clickParty(player, 2);
+              for (i = 0; i < Config.MyOwnParty.length; i += 1) {
+                if (player.name == Config.MyOwnParty[i] && player.name !== me.name) {
+                  if (player.partyflag === 2) {
+                    clickParty(player, 2);
 
-										if (me.playertype == 1) { // hardcore permit loot to leader
-											clickParty(player, 0);
-											loot.push(player.name);
-										}
+                    if (me.playertype == 1) { // hardcore permit loot to leader
+                      clickParty(player, 0);
+                      loot.push(player.name);
+                    }
 
-										delay(500);
-									}
+                    delay(500);
+                  }
 
-									if (loot.indexOf(player.name) === -1 && me.playertype == 1) { // hardcore permit loot to other chars
-										clickParty(player, 0);
-										loot.push(player.name);
-										delay(500);
-									}
-								}
-							}
+                  if (loot.indexOf(player.name) === -1 && me.playertype == 1) { // hardcore permit loot to other chars
+                    clickParty(player, 0);
+                    loot.push(player.name);
+                    delay(500);
+                  }
+                }
+              }
 
-						} else if (Config.MyOwnParty.length === 0 || Config.MyOwnParty.length === "undefined") {
-							Config.PublicMode = 2;
-						}
+            } else if (Config.MyOwnParty.length === 0 || Config.MyOwnParty.length === "undefined") {
+              Config.PublicMode = 2;
+            }
 
-						break;
-					}
+            break;
+          }
 
-					if (Config.UnpartyShitlisted) {
-						// Add new hostile players to temp shitlist, leader should have Config.ShitList set to true to update the permanent list.
-						if (getPlayerFlag(me.gid, player.gid, 8) && shitList.indexOf(player.name) === -1) {
-							shitList.push(player.name);
-						}
+          if (Config.UnpartyShitlisted) {
+            // Add new hostile players to temp shitlist, leader should have Config.ShitList set to true to update the permanent list.
+            if (getPlayerFlag(me.gid, player.gid, 8) && shitList.indexOf(player.name) === -1) {
+              shitList.push(player.name);
+            }
 
-						if (shitList.indexOf(player.name) > -1 && myPartyId !== 65535 && player.partyid === myPartyId) {
-							// Only the one sending invites should say this.
-							if ([1, 3].indexOf(Config.PublicMode) > -1) {
-								say(player.name + " is shitlisted. Do not invite them.");
-							}
+            if (shitList.indexOf(player.name) > -1 && myPartyId !== 65535 && player.partyid === myPartyId) {
+              // Only the one sending invites should say this.
+              if ([1, 3].indexOf(Config.PublicMode) > -1) {
+                say(player.name + " is shitlisted. Do not invite them.");
+              }
 
-							clickParty(player, 3);
-							delay(100);
-						}
-					}
-				}
-			}
+              clickParty(player, 3);
+              delay(100);
+            }
+          }
+        }
+      }
 
-			if (Config.Congratulations.length > 0) {
-				player = getParty();
+      if (Config.Congratulations.length > 0) {
+        player = getParty();
 
-				if (player) {
-					do {
-						if (player.name !== me.name) {
-							if (!playerLevels[player.name]) {
-								playerLevels[player.name] = player.level;
-							}
+        if (player) {
+          do {
+            if (player.name !== me.name) {
+              if (!playerLevels[player.name]) {
+                playerLevels[player.name] = player.level;
+              }
 
-							if (player.level > playerLevels[player.name]) {
-								say(Config.Congratulations[rand(0, Config.Congratulations.length - 1)].replace("$name", player.name).replace("$level", player.level).replace("$class", classes[player.classid]));
+              if (player.level > playerLevels[player.name]) {
+                say(Config.Congratulations[rand(0, Config.Congratulations.length - 1)].replace("$name", player.name).replace("$level", player.level).replace("$class", classes[player.classid]));
 
-								playerLevels[player.name] = player.level;
-							}
-						}
-					} while (player.getNext());
-				}
-			}
-		}
+                playerLevels[player.name] = player.level;
+              }
+            }
+          } while (player.getNext());
+        }
+      }
+    }
 
-		delay(500);
-	}
+    delay(500);
+  }
 }
