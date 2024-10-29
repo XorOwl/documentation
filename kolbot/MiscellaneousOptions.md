@@ -35,14 +35,14 @@
 
 * [@noah-](https://github.com/noah-) added in the char configuration files the options:
 	```javascript
-		// Public game options
+	// Public game options
 
-		// If LocalChat is enabled, chat can be sent via 'sendCopyData' instead of BNET
-		// To allow 'say' to use BNET, use 'say("msg", true)', the 2nd parameter will force BNET
-		// LocalChat messages will only be visible on clients running on the same PC
-		Config.LocalChat.Enabled = true; // enable the LocalChat system
-		Config.LocalChat.Toggle = false; // optional, set to KEY value to toggle through modes 0, 1, 2
-		Config.LocalChat.Mode = 2; // 0 = disabled, 1 = chat from 'say' (recommended), 2 = all chat (for manual play)
+	// If LocalChat is enabled, chat can be sent via 'sendCopyData' instead of BNET
+	// To allow 'say' to use BNET, use 'say("msg", true)', the 2nd parameter will force BNET
+	// LocalChat messages will only be visible on clients running on the same PC
+	Config.LocalChat.Enabled = true; // enable the LocalChat system
+	Config.LocalChat.Toggle = false; // optional, set to KEY value to toggle through modes 0, 1, 2
+	Config.LocalChat.Mode = 2; // 0 = disabled, 1 = chat from 'say' (recommended), 2 = all chat (for manual play)
 	```
 * MFTeam is ok with LocalChat in mode 1
 * [Manual played leader and Follower.js](https://github.com/blizzhackers/documentation/blob/master/kolbot/MultiBotting.md/#using-followers) - LocalChat in mode 2
