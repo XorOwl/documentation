@@ -125,6 +125,7 @@ check [download guide](https://github.com/blizzhackers/documentation/tree/master
 2. **A:** update D2BS to latest version.
 
 * check if you run the 1.14d patch of Diablo II. Try to run D2LoD directly, using a Diablo II shortcut with windowed (-w) parameter.
+* D2LoD downloaded from Blizzard will not be 1.14*d*, it will be 1.14.*b*. Easily mistakable, so make sure you download the patch from an external site such as ModDB
 * check the installed MS dependencies (VC++ 2005, 2008, 2010 and .NET Framework 3.5, 4 or higher installed). try to re-install those MS dependencies https://github.com/blizzhackers/documentation/blob/master/d2bot/ManagerSetup.md/#install-dependencies
 * you can get this error and several crashes when there are differences between ...\d2bs\d2bs.ini and ...\data\profile.json. When the manager correct the errors that profile will start just fine.
 
